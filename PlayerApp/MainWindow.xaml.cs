@@ -18,25 +18,18 @@ namespace PlayerApp
     {
         // Плейлист со списком путей к трекам
         private List<string> playlist = new List<string>();
-
         // Поток для чтения аудиофайла
         private AudioFileReader audioFileReader;
-
         // Устройство вывода звука
         private WaveOutEvent outputDevice;
-
         // Индекс текущего воспроизводимого трека
         private int currentTrackIndex = -1;
-
         // Флаг состояния "без звука"
         private bool isMuted = false;
-
         // Последнее значение громкости (до отключения звука)
         private float lastVolume = 0.5f;
-
         // Флаг для отслеживания, перетаскивает ли пользователь ползунок прогресса
         private bool isDraggingSlider = false;
-
         // Таймер обновления положения ползунка прогресса
         private DispatcherTimer progressTimer = new DispatcherTimer();
 
