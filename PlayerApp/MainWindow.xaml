@@ -46,16 +46,18 @@
 
             <!-- Кнопки управления -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <Button x:Name="btnOpenFile" Content="📂 Открыть" Width="90" Margin="0,0,10,0" Click="btnOpenFile_Click" Style="{StaticResource btnStyle}"/>
+                <Button x:Name="btnPrevious" Content="⏮ Предыдущий" Width="110" Margin="0,0,10,0" Click="btnPrevious_Click" Style="{StaticResource btnStyle}"/>
                 <Button x:Name="btnPlay" Content="▶ Воспроизвести" Width="120" Margin="0,0,10,0" Click="btnPlay_Click" Style="{StaticResource btnStyle}"/>
+                <Button x:Name="btnNext" Content="⏭ Следующий" Width="110" Margin="0,0,10,0" Click="btnNext_Click" Style="{StaticResource btnStyle}"/>
                 <Button x:Name="btnPause" Content="⏸ Пауза" Width="90" Margin="0,0,10,0" Click="btnPause_Click" Style="{StaticResource btnStyle}"/>
-                <Button x:Name="btnStop" Content="■ Стоп" Width="90" Click="btnStop_Click" Style="{StaticResource btnStyle}"/>
-                <Button x:Name="btnClear" Content="🗑️ Очистить" Width="100" Margin="5" Click="btnClearPlaylist_Click" Style="{StaticResource btnStyle}"/>
+                <Button x:Name="btnStop" Content="■ Стоп" Width="90" Margin="0,0,10,0" Click="btnStop_Click" Style="{StaticResource btnStyle}" Cursor="Hand"/>
+                <Button x:Name="btnClear" Content="🗑️ Очистить" Width="100" Margin="0,0,10,0" Click="btnClearPlaylist_Click" Style="{StaticResource btnStyle}"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <Button x:Name="btnSaveToDb" Content="💾 Сохранить в БД" Width="150" Margin="5" Click="btnSaveToDb_Click" Style="{StaticResource btnStyle}"/>
-                <Button x:Name="btnLoadFromDb" Content="📂 Загрузить из БД" Width="150" Margin="5" Click="btnLoadFromDb_Click" Style="{StaticResource btnStyle}"/>
+                <Button x:Name="btnOpenFile" Content="📂 Открыть" Width="90" Margin="0,0,10,0" Click="btnOpenFile_Click" Style="{StaticResource btnStyle}"/>
+                <Button x:Name="btnSaveToDb" Content="💾 Сохранить в БД" Width="150" Margin="0,0,10,0" Click="btnSaveToDb_Click" Style="{StaticResource btnStyle}"/>
+                <Button x:Name="btnLoadFromDb" Content="📂 Загрузить из БД" Width="150" Margin="0,0,10,0" Click="btnLoadFromDb_Click" Style="{StaticResource btnStyle}"/>
             </StackPanel>
 
             <!-- Прогресс -->

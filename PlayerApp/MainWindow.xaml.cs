@@ -34,6 +34,8 @@ namespace PlayerApp
         // Таймер обновления положения ползунка прогресса
         private DispatcherTimer progressTimer = new DispatcherTimer();
 
+        private bool isManualTrackChange = false;
+
         private bool isStopRequested = false;
         public MainWindow()
         {
@@ -205,6 +207,12 @@ namespace PlayerApp
         // Остановка текущего воспроизведения и освобождение ресурсов
         private void StopPlayback()
         {
+            // Отписываемся от события, чтобы избежать рекурсии
+            if (outputDevice != null)
+            {
+                outputDevice.PlaybackStopped -= OnPlaybackStopped;
+            }
+
             outputDevice?.Stop();
             outputDevice?.Dispose();
             outputDevice = null;
@@ -214,6 +222,12 @@ namespace PlayerApp
 
             progressTimer.Stop();
             sliderProgress.Value = 0;
+
+            // Снова подписываемся на событие
+            if (outputDevice != null)
+            {
+                outputDevice.PlaybackStopped += OnPlaybackStopped;
+            }
         }
 
         // Обработка окончания воспроизведения
@@ -221,19 +235,21 @@ namespace PlayerApp
         {
             Dispatcher.Invoke(() =>
             {
-                if (isStopRequested)
+                // Если остановка была вызвана вручную (кнопкой Стоп или переключением трека) - ничего не делаем
+                if (isStopRequested || isManualTrackChange)
                 {
-                    isStopRequested = false; // сбросим флаг
-                    return; // ничего не делаем — это было ручное нажатие "Стоп"
+                    isStopRequested = false;
+                    return;
                 }
 
+                // Автоматический переход
                 if (chkRepeat.IsChecked == true)
                 {
-                    btnPlay_Click(null, null);
+                    RestartCurrentTrack();
                 }
                 else
                 {
-                    PlayNextTrack();
+                    btnNext_Click(null, null);
                 }
             });
         }
@@ -273,6 +289,68 @@ namespace PlayerApp
             isDraggingSlider = false;
         }
 
+        private void btnPrevious_Click(object sender, RoutedEventArgs e)
+        {
+            if (playlist.Count == 0) return;
+
+            // Получаем индекс предыдущего трека
+            int newIndex = currentTrackIndex - 1;
+            if (newIndex < 0) newIndex = playlist.Count - 1;
+
+            // Переключаемся только если это другой трек
+            if (newIndex != currentTrackIndex)
+            {
+                ChangeTrack(newIndex);
+            }
+            else
+            {
+                // Если это тот же трек (в списке 1 трек), просто перезапускаем
+                RestartCurrentTrack();
+            }
+        }
+
+        // Воспроизведение следующего трека
+        private void btnNext_Click(object sender, RoutedEventArgs e)
+        {
+            if (playlist.Count == 0) return;
+
+            // Получаем индекс следующего трека
+            int newIndex = currentTrackIndex + 1;
+            if (newIndex >= playlist.Count) newIndex = 0;
+
+            ChangeTrack(newIndex);
+        }
+
+        private void ChangeTrack(int newIndex)
+        {
+            // Сохраняем состояние воспроизведения
+            bool wasPlaying = (outputDevice != null && outputDevice.PlaybackState == PlaybackState.Playing);
+
+            StopPlayback();
+            currentTrackIndex = newIndex;
+            listBoxTracks.SelectedIndex = newIndex;
+
+            if (wasPlaying)
+            {
+                btnPlay_Click(null, null);
+            }
+        }
+
+        private void RestartCurrentTrack()
+        {
+            if (outputDevice != null && outputDevice.PlaybackState == PlaybackState.Playing)
+            {
+                // Просто перематываем в начало и продолжаем воспроизведение
+                audioFileReader.CurrentTime = TimeSpan.Zero;
+            }
+            else
+            {
+                // Запускаем трек заново
+                StopPlayback();
+                btnPlay_Click(null, null);
+            }
+        }
+
         // Воспроизведение следующего трека в списке
         private void PlayNextTrack()
         {
@@ -280,7 +358,9 @@ namespace PlayerApp
 
             currentTrackIndex++;
             if (currentTrackIndex >= playlist.Count)
+            {
                 currentTrackIndex = 0;
+            }
 
             listBoxTracks.SelectedIndex = currentTrackIndex;
             btnPlay_Click(null, null);
