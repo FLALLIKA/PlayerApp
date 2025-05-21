@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Newtonsoft.Json;
 
 namespace PlayerApp
 {
@@ -349,21 +348,6 @@ namespace PlayerApp
                 StopPlayback();
                 btnPlay_Click(null, null);
             }
-        }
-
-        // Воспроизведение следующего трека в списке
-        private void PlayNextTrack()
-        {
-            if (playlist.Count == 0) return;
-
-            currentTrackIndex++;
-            if (currentTrackIndex >= playlist.Count)
-            {
-                currentTrackIndex = 0;
-            }
-
-            listBoxTracks.SelectedIndex = currentTrackIndex;
-            btnPlay_Click(null, null);
         }
 
         // Сохранение текущего трека в настройки
