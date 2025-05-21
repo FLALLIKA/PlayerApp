@@ -124,7 +124,6 @@ namespace PlayerApp
             }
         }
 
-
         // Пауза
         private void btnPause_Click(object sender, RoutedEventArgs e)
         {
@@ -169,7 +168,6 @@ namespace PlayerApp
             Properties.Settings.Default.LastTrack = "";
             Properties.Settings.Default.Save();
         }
-
 
         // Изменение громкости
         private void sliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
