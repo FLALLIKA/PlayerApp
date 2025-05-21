@@ -51,7 +51,10 @@
                 <Button x:Name="btnPause" Content="⏸ Пауза" Width="90" Margin="0,0,10,0" Click="btnPause_Click" Style="{StaticResource btnStyle}"/>
                 <Button x:Name="btnStop" Content="■ Стоп" Width="90" Click="btnStop_Click" Style="{StaticResource btnStyle}"/>
                 <Button x:Name="btnClear" Content="🗑️ Очистить" Width="100" Margin="5" Click="btnClearPlaylist_Click" Style="{StaticResource btnStyle}"/>
-                <Button x:Name="btnSave" Content="💾 Сохранить плейлист" Width="150" Margin="5" Click="btnSavePlaylist_Click" Style="{StaticResource btnStyle}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <Button x:Name="btnSave" Content="💾 Сохранить плейлист" Width="165" Margin="5" Click="btnSavePlaylist_Click" Style="{StaticResource btnStyle}"/>
             </StackPanel>
 
             <!-- Прогресс -->
