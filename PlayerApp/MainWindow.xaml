@@ -54,7 +54,8 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <Button x:Name="btnSave" Content="💾 Сохранить плейлист" Width="165" Margin="5" Click="btnSavePlaylist_Click" Style="{StaticResource btnStyle}"/>
+                <Button x:Name="btnSaveToDb" Content="💾 Сохранить в БД" Width="150" Margin="5" Click="btnSaveToDb_Click" Style="{StaticResource btnStyle}"/>
+                <Button x:Name="btnLoadFromDb" Content="📂 Загрузить из БД" Width="150" Margin="5" Click="btnLoadFromDb_Click" Style="{StaticResource btnStyle}"/>
             </StackPanel>
 
             <!-- Прогресс -->

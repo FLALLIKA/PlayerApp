@@ -38,6 +38,7 @@ namespace PlayerApp
         public MainWindow()
         {
             InitializeComponent();
+            DatabaseHelper.InitializeDatabase();
 
             // Устанавливаем громкость из настроек
             sliderVolume.Value = Properties.Settings.Default.Volume * 100;
@@ -329,9 +330,8 @@ namespace PlayerApp
             }
         }
 
-        // Сохранение плейлиста
-
-        private void btnSavePlaylist_Click(object sender, RoutedEventArgs e)
+        // Сохранение в БД
+        private void btnSaveToDb_Click(object sender, RoutedEventArgs e)
         {
             if (playlist.Count == 0)
             {
@@ -339,25 +339,49 @@ namespace PlayerApp
                 return;
             }
 
+            var dialog = new PlaylistNameDialog();
+            if (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.PlaylistName))
+            {
+                try
+                {
+                    DatabaseHelper.SavePlaylist(dialog.PlaylistName, playlist);
+                    MessageBox.Show("Плейлист успешно сохранён в базу данных!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка при сохранении: " + ex.Message);
+                }
+            }
+        }
+
+        // Загрузка из БД
+        private void btnLoadFromDb_Click(object sender, RoutedEventArgs e)
+        {
             try
             {
-                SaveFileDialog sfd = new SaveFileDialog
-                {
-                    Filter = "JSON файл|*.json",
-                    FileName = "playlist.json"
-                };
+                var playlists = DatabaseHelper.LoadAllPlaylists();
 
-                if (sfd.ShowDialog() == true)
+                var dialog = new PlaylistSelectorDialog(playlists);
+                if (dialog.ShowDialog() == true && dialog.SelectedPlaylist != null)
                 {
-                    string json = JsonConvert.SerializeObject(playlist, Formatting.Indented);
-                    File.WriteAllText(sfd.FileName, json);
-                    MessageBox.Show("Плейлист успешно сохранён в JSON!");
+                    playlist = dialog.SelectedPlaylist.Tracks;
+                    listBoxTracks.Items.Clear();
+
+                    foreach (var file in playlist)
+                        listBoxTracks.Items.Add(System.IO.Path.GetFileName(file));
+
+                    if (playlist.Count > 0)
+                    {
+                        listBoxTracks.SelectedIndex = 0;
+                        currentTrackIndex = 0;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при сохранении: " + ex.Message);
+                MessageBox.Show("Ошибка при загрузке: " + ex.Message);
             }
         }
+
     }
 }

@@ -1,0 +1,12 @@
+﻿<Window x:Class="PlayerApp.PlaylistNameDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Имя плейлиста" Height="150" Width="300" WindowStartupLocation="CenterOwner">
+    <Grid Margin="10">
+        <StackPanel>
+            <TextBlock Text="Введите имя плейлиста:" Margin="0,0,0,10"/>
+            <TextBox x:Name="txtName" Margin="0,0,0,10"/>
+            <Button Content="OK" Width="80" HorizontalAlignment="Right" Click="OkButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
