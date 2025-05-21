@@ -401,17 +401,46 @@ namespace PlayerApp
                 return;
             }
 
-            var dialog = new PlaylistNameDialog();
-            if (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.PlaylistName))
+            // Сначала выбираем категорию
+            var categories = DatabaseHelper.GetAllCategories();
+            var categoryDialog = new CategorySelectorDialog(categories);
+
+            if (categoryDialog.ShowDialog() == true)
             {
-                try
+                int categoryId;
+
+                if (categoryDialog.AddNewCategorySelected)
                 {
-                    DatabaseHelper.SavePlaylist(dialog.PlaylistName, playlist);
-                    MessageBox.Show("Плейлист успешно сохранён в базу данных!");
+                    // Диалог для ввода имени новой категории
+                    var inputDialog = new InputDialog("Введите название новой категории:");
+                    if (inputDialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(inputDialog.InputText))
+                    {
+                        categoryId = DatabaseHelper.AddCategory(inputDialog.InputText);
+                    }
+                    else
+                    {
+                        return; // Пользователь отменил ввод
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show("Ошибка при сохранении: " + ex.Message);
+                    categoryId = categoryDialog.SelectedCategory?.Id ?? 0;
+                    if (categoryId == 0) return;
+                }
+
+                // Затем вводим имя плейлиста
+                var nameDialog = new PlaylistNameDialog();
+                if (nameDialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(nameDialog.PlaylistName))
+                {
+                    try
+                    {
+                        DatabaseHelper.SavePlaylist(nameDialog.PlaylistName, categoryId, playlist);
+                        MessageBox.Show("Плейлист успешно сохранён!");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при сохранении: {ex.Message}");
+                    }
                 }
             }
         }
@@ -421,27 +450,46 @@ namespace PlayerApp
         {
             try
             {
-                var playlists = DatabaseHelper.LoadAllPlaylists();
-
-                var dialog = new PlaylistSelectorDialog(playlists);
-                if (dialog.ShowDialog() == true && dialog.SelectedPlaylist != null)
+                // Сначала выбираем категорию
+                var categories = DatabaseHelper.GetAllCategories();
+                if (categories.Count == 0)
                 {
-                    playlist = dialog.SelectedPlaylist.Tracks;
-                    listBoxTracks.Items.Clear();
+                    MessageBox.Show("Нет доступных категорий.");
+                    return;
+                }
 
-                    foreach (var file in playlist)
-                        listBoxTracks.Items.Add(System.IO.Path.GetFileName(file));
-
-                    if (playlist.Count > 0)
+                var categoryDialog = new CategorySelectorDialog(categories);
+                if (categoryDialog.ShowDialog() == true && categoryDialog.SelectedCategory != null)
+                {
+                    // Затем выбираем плейлист из выбранной категории
+                    var playlists = DatabaseHelper.GetPlaylistsByCategory(categoryDialog.SelectedCategory.Id);
+                    if (playlists.Count == 0)
                     {
-                        listBoxTracks.SelectedIndex = 0;
-                        currentTrackIndex = 0;
+                        MessageBox.Show("В выбранной категории нет плейлистов.");
+                        return;
+                    }
+
+                    var playlistDialog = new PlaylistSelectorDialog(playlists);
+                    if (playlistDialog.ShowDialog() == true && playlistDialog.SelectedPlaylist != null)
+                    {
+                        // Загружаем выбранный плейлист
+                        playlist = playlistDialog.SelectedPlaylist.Tracks;
+                        listBoxTracks.Items.Clear();
+
+                        foreach (var file in playlist)
+                            listBoxTracks.Items.Add(Path.GetFileName(file));
+
+                        if (playlist.Count > 0)
+                        {
+                            listBoxTracks.SelectedIndex = 0;
+                            currentTrackIndex = 0;
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при загрузке: " + ex.Message);
+                MessageBox.Show($"Ошибка при загрузке: {ex.Message}");
             }
         }
 

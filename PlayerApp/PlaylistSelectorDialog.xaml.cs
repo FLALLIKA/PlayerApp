@@ -24,7 +24,10 @@ namespace PlayerApp
         public PlaylistSelectorDialog(List<Playlist> playlists)
         {
             InitializeComponent();
-            listBoxPlaylists.ItemsSource = playlists;
+            listBoxPlaylists.ItemsSource = playlists
+            .OrderBy(p => p.Category?.Name)
+            .ThenBy(p => p.Name);
+            listBoxPlaylists.DisplayMemberPath = "Name";
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)

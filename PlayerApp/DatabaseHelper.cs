@@ -15,66 +15,118 @@ public static class DatabaseHelper
         if (!File.Exists(databaseFile))
         {
             SQLiteConnection.CreateFile(databaseFile);
+        }
 
-            using (var connection = new SQLiteConnection(connectionString))
-            {
-                connection.Open();
+        using (var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
 
-                string sql = @"CREATE TABLE IF NOT EXISTS Playlists (
-                                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                Name TEXT NOT NULL,
-                                PlaylistData TEXT NOT NULL
-                              );";
+            // Создаём таблицу Categories, если её нет
+            string createCategories = @"
+            CREATE TABLE IF NOT EXISTS Categories (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT NOT NULL UNIQUE
+            )";
 
-                var command = new SQLiteCommand(sql, connection);
-                command.ExecuteNonQuery();
-            }
+            new SQLiteCommand(createCategories, connection).ExecuteNonQuery();
+
+            // Создаём таблицу Playlists с внешним ключом
+            string createPlaylists = @"
+            CREATE TABLE IF NOT EXISTS Playlists (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT NOT NULL,
+            CategoryId INTEGER NOT NULL,
+            PlaylistData TEXT NOT NULL,
+            FOREIGN KEY(CategoryId) REFERENCES Categories(Id)
+            )";
+
+            new SQLiteCommand(createPlaylists, connection).ExecuteNonQuery();
         }
     }
 
-    public static void SavePlaylist(string name, List<string> tracks)
+    public static void SavePlaylist(string name, int categoryId, List<string> tracks)
     {
         string json = JsonConvert.SerializeObject(tracks);
 
         using (var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
-
-            string sql = "INSERT INTO Playlists (Name, PlaylistData) VALUES (@name, @data)";
+            string sql = @"INSERT INTO Playlists (Name, CategoryId, PlaylistData) 
+                      VALUES (@name, @categoryId, @data)";
             var command = new SQLiteCommand(sql, connection);
             command.Parameters.AddWithValue("@name", name);
+            command.Parameters.AddWithValue("@categoryId", categoryId);
             command.Parameters.AddWithValue("@data", json);
             command.ExecuteNonQuery();
         }
     }
 
-    public static List<Playlist> LoadAllPlaylists()
+    public static List<Playlist> GetPlaylistsByCategory(int categoryId)
     {
         var playlists = new List<Playlist>();
 
         using (var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
+            string sql = @"SELECT Id, Name, PlaylistData FROM Playlists 
+                      WHERE CategoryId = @categoryId ORDER BY Name";
+            var command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@categoryId", categoryId);
 
-            string sql = "SELECT Id, Name, PlaylistData FROM Playlists";
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    playlists.Add(new Playlist
+                    {
+                        Id = reader.GetInt32(0),
+                        Name = reader.GetString(1),
+                        CategoryId = categoryId,
+                        Tracks = JsonConvert.DeserializeObject<List<string>>(reader.GetString(2))
+                    });
+                }
+            }
+        }
+
+        return playlists;
+    }
+
+    public static List<Category> GetAllCategories()
+    {
+        var categories = new List<Category>();
+
+        using (var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            string sql = "SELECT Id, Name FROM Categories ORDER BY Name";
             var command = new SQLiteCommand(sql, connection);
 
             using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    var playlist = new Playlist
+                    categories.Add(new Category
                     {
                         Id = reader.GetInt32(0),
-                        Name = reader.GetString(1),
-                        Tracks = JsonConvert.DeserializeObject<List<string>>(reader.GetString(2))
-                    };
-                    playlists.Add(playlist);
+                        Name = reader.GetString(1)
+                    });
                 }
             }
         }
 
-        return playlists;
+        return categories;
+    }
+
+    public static int AddCategory(string name)
+    {
+        using (var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            string sql = "INSERT INTO Categories (Name) VALUES (@name); SELECT last_insert_rowid();";
+            var command = new SQLiteCommand(sql, connection);
+            command.Parameters.AddWithValue("@name", name);
+            return Convert.ToInt32(command.ExecuteScalar());
+        }
     }
 
     public static void DeletePlaylist(int id)
