@@ -1,12 +1,33 @@
 ﻿<Window x:Class="PlayerApp.PlaylistNameDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Имя плейлиста" Height="150" Width="300" WindowStartupLocation="CenterOwner" Icon="/Images/icon.ico">
+        Title="Имя плейлиста" Height="150" Width="300" WindowStartupLocation="CenterOwner" Icon="/Images/icon.ico" Background="#FF1E1E2E" Foreground="White">
+    <Window.Resources>
+        <Style x:Key="btnStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FF3E3E5E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="5,2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+    </Window.Resources>
     <Grid Margin="10">
         <StackPanel>
             <TextBlock Text="Введите имя плейлиста:" Margin="0,0,0,10"/>
             <TextBox x:Name="txtName" Margin="0,0,0,10"/>
-            <Button Content="OK" Width="80" HorizontalAlignment="Right" Click="OkButton_Click"/>
+            <Button Content="OK" Width="80" HorizontalAlignment="Right" Click="OkButton_Click" Style="{StaticResource btnStyle}"/>
         </StackPanel>
     </Grid>
 </Window>
