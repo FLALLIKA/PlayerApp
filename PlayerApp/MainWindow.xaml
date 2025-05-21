@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlayerApp"
         mc:Ignorable="d"
-        Title="Медиапроигрыватель" Height="450" MinHeight="450" Width="850" MinWidth="850" Icon="/Images/icon.ico" Background="#FF1E1E2E" Foreground="White">
+        Title="Медиапроигрыватель" Height="450" MinHeight="450" Width="1000" MinWidth="1000" Icon="/Images/icon.ico" Background="#FF1E1E2E" Foreground="White">
     <Window.Resources>
         <Style x:Key="btnStyle" TargetType="Button">
             <Setter Property="Background" Value="#FF3E3E5E"/>
@@ -51,6 +51,7 @@
                 <Button x:Name="btnPause" Content="⏸ Пауза" Width="90" Margin="0,0,10,0" Click="btnPause_Click" Style="{StaticResource btnStyle}"/>
                 <Button x:Name="btnStop" Content="■ Стоп" Width="90" Click="btnStop_Click" Style="{StaticResource btnStyle}"/>
                 <Button x:Name="btnClear" Content="🗑️ Очистить" Width="100" Margin="5" Click="btnClearPlaylist_Click" Style="{StaticResource btnStyle}"/>
+                <Button x:Name="btnSave" Content="💾 Сохранить плейлист" Width="150" Margin="5" Click="btnSavePlaylist_Click" Style="{StaticResource btnStyle}"/>
             </StackPanel>
 
             <!-- Прогресс -->

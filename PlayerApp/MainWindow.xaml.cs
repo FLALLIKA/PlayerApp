@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Newtonsoft.Json;
 
 namespace PlayerApp
 {
@@ -325,6 +326,37 @@ namespace PlayerApp
             catch
             {
                 // Защита от ошибок загрузки
+            }
+        }
+
+        // Сохранение плейлиста
+
+        private void btnSavePlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            if (playlist.Count == 0)
+            {
+                MessageBox.Show("Плейлист пуст. Нечего сохранять.");
+                return;
+            }
+
+            try
+            {
+                SaveFileDialog sfd = new SaveFileDialog
+                {
+                    Filter = "JSON файл|*.json",
+                    FileName = "playlist.json"
+                };
+
+                if (sfd.ShowDialog() == true)
+                {
+                    string json = JsonConvert.SerializeObject(playlist, Formatting.Indented);
+                    File.WriteAllText(sfd.FileName, json);
+                    MessageBox.Show("Плейлист успешно сохранён в JSON!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при сохранении: " + ex.Message);
             }
         }
     }
