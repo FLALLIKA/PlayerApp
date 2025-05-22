@@ -20,13 +20,21 @@ namespace PlayerApp
     public partial class PlaylistSelectorDialog : Window
     {
         public Playlist SelectedPlaylist { get; private set; }
+        private List<Playlist> _originalPlaylists; // Объявляем поле класса
 
         public PlaylistSelectorDialog(List<Playlist> playlists)
         {
             InitializeComponent();
-            listBoxPlaylists.ItemsSource = playlists
-            .OrderBy(p => p.Category?.Name)
-            .ThenBy(p => p.Name);
+            _originalPlaylists = playlists; // Сохраняем оригинальный список
+            UpdateListView();
+        }
+
+        private void UpdateListView()
+        {
+            listBoxPlaylists.ItemsSource = _originalPlaylists
+                .OrderBy(p => p.Category?.Name)
+                .ThenBy(p => p.Name)
+                .ToList();
             listBoxPlaylists.DisplayMemberPath = "Name";
         }
 
@@ -45,11 +53,12 @@ namespace PlayerApp
                     MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     DatabaseHelper.DeletePlaylist(playlist.Id);
-                    ((List<Playlist>)listBoxPlaylists.ItemsSource).Remove(playlist);
-                    listBoxPlaylists.Items.Refresh();
+                    _originalPlaylists.Remove(playlist); // Удаляем из оригинального списка
+                    UpdateListView(); // Обновляем отображение
                 }
             }
         }
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
