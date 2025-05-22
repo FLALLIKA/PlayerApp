@@ -209,6 +209,16 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Отчеты ЛР1\Лр1 Прусакова.docx" />
+    <None Include="Отчеты ЛР1\Лр1 Рубцов.docx" />
+    <None Include="Отчеты ЛР1\Лр1 Фатеева.docx" />
+    <None Include="Отчеты ЛР1\Лр1 Черепанов.docx" />
+    <None Include="Отчеты ЛР1\Лр1 Чернов.docx" />
+    <None Include="Отчеты ЛР2\Лр1-2 К.В. Фатеева.docx" />
+    <None Include="Отчеты ЛР2\Лр1-2М.С. Черепанов.docx" />
+    <None Include="Отчеты ЛР2\Лр1-2Чернов.docx" />
+    <None Include="Отчеты ЛР2\Лр1-2Ю.Д. Прусакова.docx" />
+    <None Include="Отчеты ЛР2\Лр2 Рубцов.docx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -231,6 +241,7 @@
   <ItemGroup>
     <Resource Include="Images\Collaborators.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
